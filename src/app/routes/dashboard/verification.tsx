@@ -38,10 +38,12 @@ interface VerificationData {
     // Dates
     birthdate?: string;
     dateOfBirth?: string;
+    birthday?: string; // Added birthday mapping
     registrationDate?: string;
 
     // Contact information
     telephoneno?: string;
+    phoneNumber?: string; // Added base phoneNumber mapping
     phoneNumber1?: string;
     phoneNumber2?: string;
     email?: string;
@@ -221,9 +223,11 @@ const VerificationResultModal: React.FC<VerificationResultModalProps> = ({
             'firstName': 'First Name',
             'lastName': 'Last Name',
             'middleName': 'Middle Name',
+            'phoneNumber': 'Phone Number', // Added phone mapping
             'phoneNumber1': 'Phone Number 1',
             'phoneNumber2': 'Phone Number 2',
             'dateOfBirth': 'Date of Birth',
+            'birthday': 'Date of Birth', // Added birthday mapping
             'residentialAddress': 'Residential Address',
             'stateOfOrigin': 'State of Origin',
             'stateOfResidence': 'State of Residence',
@@ -264,8 +268,10 @@ const VerificationResultModal: React.FC<VerificationResultModalProps> = ({
             middlename: <User className="w-4 h-4" />,
             title: <User className="w-4 h-4" />,
             nameOnCard: <User className="w-4 h-4" />,
+            birthdate: <User className="w-4 h-4" />,
 
             // Contact info
+            phoneNumber: <Phone className="w-4 h-4" />, // Added icon mapping
             phoneNumber1: <Phone className="w-4 h-4" />,
             phoneNumber2: <Phone className="w-4 h-4" />,
             telephoneno: <Phone className="w-4 h-4" />,
@@ -273,7 +279,7 @@ const VerificationResultModal: React.FC<VerificationResultModalProps> = ({
 
             // Dates
             dateOfBirth: <CalendarIcon className="w-4 h-4" />,
-            birthdate: <CalendarIcon className="w-4 h-4" />,
+            birthday: <CalendarIcon className="w-4 h-4" />, // Added icon mapping
             birth_date: <CalendarIcon className="w-4 h-4" />,
             registrationDate: <CalendarIcon className="w-4 h-4" />,
 
@@ -306,8 +312,8 @@ const VerificationResultModal: React.FC<VerificationResultModalProps> = ({
         return iconMap[key] || <Info className="w-4 h-4" />;
     };
 
-    // const isImageField = (key: string): boolean => ['base64Image', 'photo', 'signature'].includes(key);
-    const isSensitiveField = (key: string): boolean => ['bvn', 'nin', 'phoneNumber1', 'phoneNumber2', 'telephoneno'].includes(key);
+    // Updated sensitive field to include "phoneNumber"
+    const isSensitiveField = (key: string): boolean => ['bvn', 'nin', 'phoneNumber', 'phoneNumber1', 'phoneNumber2', 'telephoneno'].includes(key);
 
     // Categorize fields based on verification type
     const getFieldCategories = (): Record<string, string[]> => {
@@ -323,8 +329,10 @@ const VerificationResultModal: React.FC<VerificationResultModalProps> = ({
                 };
             case 'bvn':
                 return {
-                    personal: ['firstName', 'lastName', 'middleName', 'nameOnCard', 'title', 'gender', 'dateOfBirth', 'maritalStatus', 'nationality'],
-                    contact: ['phoneNumber1', 'phoneNumber2', 'email'],
+                    // Added "birthday" to personal array
+                    personal: ['firstName', 'lastName', 'middleName', 'nameOnCard', 'title', 'gender', 'dateOfBirth', 'birthday', 'maritalStatus', 'nationality'],
+                    // Added "phoneNumber" to contact array
+                    contact: ['phoneNumber', 'phoneNumber1', 'phoneNumber2', 'email'],
                     address: ['residentialAddress', 'stateOfOrigin', 'stateOfResidence', 'lgaOfOrigin', 'lgaOfResidence'],
                     banking: ['bvn', 'nin', 'number', 'enrollmentBank', 'enrollmentBranch', 'levelOfAccount', 'registrationDate', 'watchListed']
                 };
@@ -441,7 +449,7 @@ const VerificationResultModal: React.FC<VerificationResultModalProps> = ({
                                     <h3 className="font-medium text-gray-900 mb-3">Profile Photo</h3>
                                     <div className="aspect-square bg-white rounded-lg overflow-hidden border mb-4">
                                         <img
-                                            src={`data:image/jpeg;base64,${result.data.base64Image || result.data.photo}`}
+                                            src={result.data.photo?.startsWith('/') ? `data:image/jpeg;base64,${result.data.photo}` : `data:image/jpeg;base64,${result.data.base64Image || result.data.photo}`}
                                             alt="Profile"
                                             className="w-full h-full object-cover"
                                             onError={(e) => {
